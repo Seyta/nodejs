@@ -1,0 +1,48 @@
+#chat_div {
+
+    border: solid #000000 2px;
+    width: 80%;
+    min-width: 300px;
+    padding: 0 4px 4px 4px;
+}
+
+#message_box {
+
+    width: 80%;
+    float: left;
+    padding-right: 10px;
+}
+
+#chat {
+
+    border: solid #808080 1px;
+    margin-bottom: 7px;
+    padding: 0px 8px 0px 8px;
+    margin-top: 8px;
+}
+
+#message {
+
+    width: 90%;
+}
+
+#submit {
+
+    width: 9%;
+}
+
+#users_list {
+
+    border-left: double grey 1px;
+    height: 100%;
+    float:left;
+    padding-left: 10px;
+}
+
+.clearfix:after {
+    content: ".";
+    visibility: hidden;
+    display: block;
+    height: 0;
+    clear: both;
+}

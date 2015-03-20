@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Socket.io</title>
+    <link rel="stylesheet" type="text/css" href="/default.css">
+</head>
+
+<body>
+<h1>Communication avec socket.io !</h1>
+<div id="chat_div"  class="clearfix">
+
+    <div id="message_box">
+        <div id="chat">
+            <p> Bienvenue sur le chat ! </p>
+        </div>
+        <form>
+            <input type="text" name="message" id="message">
+            <input type="button" value="Envoyer" id="submit">
+        </form>
+    </div>
+
+    <div id="users_list">
+
+    </div>
+
+</div>
+
+<script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
+<script src="/socket.io/socket.io.js"></script>
+<script>
+    var socket = io.connect('http://localhost:8080');
+
+    var pseudo = prompt('Quel est votre pseudo ?');
+
+    addUser(pseudo);
+    socket.emit('petit_nouveau', pseudo);
+
+    socket.on('user_list', function(a_user_list) {
+
+        for ( index in a_user_list) {
+
+            addUser(a_user_list[index]);
+        }
+    })
+
+
+    socket.on('petit_nouveau', function(pseudo) {
+        addUser(pseudo);
+    })
+
+    // On affiche une boîte de dialogue quand le serveur nous envoie un "message"
+    socket.on('chat_to_client', function(data) {
+        addMessage(data.pseudo, data.message);
+    })
+
+    $('#message').keypress(function(event) {
+        if ( event.which == 13 ) {
+            event.preventDefault();
+            $('#submit').click();
+        }
+    })
+
+    // Lorsqu'on clique sur le bouton, on envoie un "message" au serveur
+    $('#submit').click(function () {
+        socket.emit('chat_server', $('#message').val());
+        $('#message').val('');
+    })
+
+    $(window).unload(function() {
+        socket.emit('user_leaving');
+    })
+
+    socket.on('user_remove', function(pseudo){
+        removeUser(pseudo);
+    })
+
+    function addMessage(pseudo, message) {
+
+        $('#chat').append('<div class="message">' +
+            '<p> <strong>' + pseudo + '</strong>' + ' dit :  ' + message +
+            '</p></div>');
+    }
+
+    function addUser(pseudo) {
+
+        $('#users_list').append('<div class="user" id="' +  pseudo + '"> ' + pseudo + '</div>');
+    }
+
+    function removeUser(pseudo) {
+
+        var message =  '<div class="message">' +
+                '<p> <strong>' + pseudo + '</strong> as left the chat ! </p></div>';
+        $('#chat').append(message);
+        $('#'+pseudo).remove();
+
+    }
+
+</script>
+</body>
+</html>
