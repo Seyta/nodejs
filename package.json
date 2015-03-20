@@ -4,7 +4,8 @@
   "dependencies": {
     "express": "~3.3.4",
     "socket.io": "~1.2.1",
-    "ent": "~0.1.0"
+    "ent": "~0.1.0",
+    "fs": "~0.12.0"
   },
   "author": "Seyta <jeremy.blanc.ap@gmail.com",
   "description": "Testing Node.js / socket-io"
