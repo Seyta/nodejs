@@ -26,12 +26,20 @@
 
 </div>
 
+<audio preload="auto" id="audio">
+    <source src="/GTalkNotify.mp3" type="audio/mp3">
+    Your browser does not support the audio element.
+</audio>
+
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
+
     var socket = io.connect('http://localhost:8080');
 
-    var pseudo = prompt('Quel est votre pseudo ?');
+    do {
+        var pseudo = prompt('Quel est votre pseudo ?');
+    } while ( pseudo == null || pseudo == '');
 
     addUser(pseudo);
     socket.emit('petit_nouveau', pseudo);
@@ -51,7 +59,7 @@
 
     // On affiche une boîte de dialogue quand le serveur nous envoie un "message"
     socket.on('chat_to_client', function(data) {
-        addMessage(data.pseudo, data.message);
+        addMessage(data.pseudo, data.message, data.datetime);
     })
 
     $('#message').keypress(function(event) {
@@ -63,8 +71,13 @@
 
     // Lorsqu'on clique sur le bouton, on envoie un "message" au serveur
     $('#submit').click(function () {
-        socket.emit('chat_server', $('#message').val());
-        $('#message').val('');
+
+        var message = $('#message').val();
+        if ( message != '') {
+            
+            socket.emit('chat_server', message);
+            $('#message').val('');
+        }
     })
 
     $(window).unload(function() {
@@ -75,11 +88,18 @@
         removeUser(pseudo);
     })
 
-    function addMessage(pseudo, message) {
+    function addMessage(pseudo, message, datetime) {
 
         $('#chat').append('<div class="message">' +
-            '<p> <strong>' + pseudo + '</strong>' + ' dit :  ' + message +
+            '<p> <strong>[' + datetime + '] ' + pseudo + '</strong>' + ' dit :  ' + message +
             '</p></div>');
+
+        var objDiv = document.getElementById("chat");
+        objDiv.scrollTop = objDiv.scrollHeight;
+
+        audio =  $('#audio')[0];
+        audio.currentTime = 0;
+        audio.play();
     }
 
     function addUser(pseudo) {
