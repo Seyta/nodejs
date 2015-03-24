@@ -25,12 +25,23 @@
 
 #message {
 
-    width: 90%;
+    width: 80%;
 }
 
 #submit {
 
-    width: 9%;
+    width: 7%;
+}
+
+#btn_file {
+
+    width: 7%;
+}
+
+#fileselector {
+
+    display: none;
+    visibility: hidden;
 }
 
 #users_list {

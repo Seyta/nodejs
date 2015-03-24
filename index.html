@@ -17,6 +17,7 @@
         <form>
             <input type="text" name="message" id="message">
             <input type="button" value="Envoyer" id="submit">
+            <input type="button" value="fichier" id="btn_file">
         </form>
     </div>
 
@@ -30,6 +31,8 @@
     <source src="/GTalkNotify.mp3" type="audio/mp3">
     Your browser does not support the audio element.
 </audio>
+
+<input type="file" id="fileselector" />
 
 <script src="http://code.jquery.com/jquery-1.10.1.min.js"></script>
 <script src="/socket.io/socket.io.js"></script>
@@ -62,6 +65,11 @@
         addMessage(data.pseudo, data.message, data.datetime);
     })
 
+    socket.on('server_image', function(data) {
+
+        addImage(data.pseudo, data.image, data.datetime);
+    })
+
     $('#message').keypress(function(event) {
         if ( event.which == 13 ) {
             event.preventDefault();
@@ -74,10 +82,29 @@
 
         var message = $('#message').val();
         if ( message != '') {
-            
+
             socket.emit('chat_server', message);
             $('#message').val('');
         }
+    })
+
+    $('#btn_file').click(function() {
+
+
+        $('#fileselector').click();
+    })
+
+    $('#fileselector').change(function(e) {
+
+        var file = e.originalEvent.target.files[0],
+                reader = new FileReader();
+
+        reader.onload = function(evt) {
+
+            socket.emit('user_image', evt.target.result);
+        }
+
+        reader.readAsDataURL(file);
     })
 
     $(window).unload(function() {
@@ -100,6 +127,13 @@
         audio =  $('#audio')[0];
         audio.currentTime = 0;
         audio.play();
+    }
+
+    function addImage(pseudo, image, datetime) {
+
+        $('#chat').append('<div class="message">' +
+            '<p> <strong>[' + datetime + '] ' + pseudo + '</strong>' + ' dit : <a href="' + image + '">  <img src="' + image +
+            '" title="download" /> </a></p></div>');
     }
 
     function addUser(pseudo) {

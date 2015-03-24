@@ -68,6 +68,20 @@ io.sockets.on('connection', function (socket, pseudo) {
         db.close();
     });
 
+    socket.on('user_image', function(datas) {
+
+        var currentdate = new Date();
+        var datetime =  currentdate.getDate() + "/"
+            + (currentdate.getMonth()+1)  + "/"
+            + currentdate.getFullYear() + " @ "
+            + currentdate.getHours() + ":"
+            + currentdate.getMinutes() + ":"
+            + currentdate.getSeconds();
+
+        socket.broadcast.emit('server_image', {pseudo: socket.pseudo, image: datas, datetime: datetime} );
+        socket.emit('server_image', {pseudo: socket.pseudo, image: datas, datetime: datetime});
+    })
+
     socket.on('user_leaving', function() {
 
         var index = user_lists.indexOf(socket.pseudo);
